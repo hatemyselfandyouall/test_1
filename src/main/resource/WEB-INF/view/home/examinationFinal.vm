@@ -1,0 +1,113 @@
+#set($layout="/WEB-INF/view/default.vm")
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no">
+    <meta name="generator" content="bd-mobcard">
+    <meta http-equiv="Cache-Control" content="no-cache">
+
+    <script src="../js/vendor/jquery-1.11.2.min.js"></script>
+    <script src="../js/exam/jquery.timer.js"></script>
+
+    <title>专业水平测验</title>
+
+    <link href="../css/exam/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+
+<div class="gztt" id='notice'>
+
+
+<div class="test end" id='level1'>
+    <div class="score" ><img src="" alt=""/></div>
+    <div class="test_con">
+        <div class="answer_con">
+            <h1>恭喜您完成测试</h1>
+            <p>
+            <p>
+                <span>详细分析：</span><br/>
+                $detail,请再接再厉!
+            </p>
+        </div>
+    </div>
+    <div class="share"><img src="../images/exam/share.png" alt="分享"/></div>
+    <div class="restart" onclick="restart()"><img src="../images/exam/share.png" alt="重新開始測試"/></div>
+</div>
+<input type="hidden" id="totalTime" value="$examination.examTime"/>
+<div class="share_b"><img src="../images/exam/fx.png" alt=""/></div>
+
+<!--<div class="guanzhu">
+  
+    <img src="../images/exam/ico_tc_bg.png" alt="关注"/>
+    </div>-->
+
+<div class="guanzhu1" id="guanzhu">	<div class="jt"><img src="../images/exam/jiantou.png" alt=""/></div>	 <p id="gz_p"> 关注书法科技,免费学习书法课程</p>
+    <div class="guanzhu_but"><a href="https://mp.weixin.qq.com/s?__biz=MzU4OTI4ODU3Mg==&mid=2247483658&idx=1&sn=f503e9bd07d60438d9193bd1c7718de2">关注微信：书法科技</a></div>
+</div>
+<input type="hidden" name='sumScore' id='sumScore' value="0">
+</body>
+<script type="text/javascript" >
+    $(function(){
+
+        initExam();
+
+
+        $(".submit").click(function() {
+            checkAnswer2(this)
+        });
+        $(".submit2").click(function() {
+            checkAnswer3(this)
+        });
+        $('li').click(function(){
+            if($(this).attr('questionType')==3){
+                changeState($(this).find('input')[0]);
+                return;
+            }
+            checkAnswer(this)
+        });
+
+
+
+        function WeiXinShareBtn() {
+            if (typeof WeixinJSBridge == "undefined") {
+                alert("请先通过微信搜索线话英语并添加为好友，通过微信分享文章 :) ");
+            } else {
+                WeixinJSBridge.invoke('shareTimeline', {
+                    "title": "英语测试",
+                    "link": "http://wx.linewow.com/ceshi/index.html",
+                    "desc": "关注互联网创业",
+                    "img_url": "http://wx.linewow.com/ceshi/img/topimg.jpg"
+                });
+            }
+        }
+        $('.share').click(function(){
+//                WeiXinShareBtn();
+
+            $('.share_b').css('display','block');
+            location.href = "#title";
+        });
+
+        $('.share_b').click(function(){
+            $(this).css('display','none');
+        });
+        $('#close').click(function(){
+            $('.guanzhu1').css('display','none');
+        });
+
+    })
+    function initExam(){
+        $('.topbox').css('display','none');
+        $('.test:first').css('display','block');
+    }
+</script>
+<script>
+    function restart() {
+        window.location.href='?action=restartPage&id='+$!examination.id;
+    }
+</script>
+</html>

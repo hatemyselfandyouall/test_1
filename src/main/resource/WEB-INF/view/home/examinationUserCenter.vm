@@ -1,0 +1,58 @@
+#set($layout="/WEB-INF/view/default.vm")
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0,user-scalable=no">
+    <meta name="generator" content="bd-mobcard">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    <!--weui-->
+    <link rel="stylesheet" href="../we/css/weui.css"/>
+    <link rel="stylesheet" href="../we/example.css"/>
+    <script src="../we/zepto.min.js"></script>
+    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="https://res.wx.qq.com/open/libs/weuijs/1.0.0/weui.min.js"></script>
+    <!--weui-->
+    <script src="../js/vendor/jquery-1.11.2.min.js"></script>
+    <script src="../js/exam/jquery.timer.js"></script>
+
+    <title>专业水平测验</title>
+
+    <link href="../css/exam/style.css" rel="stylesheet" type="text/css">
+
+</head>
+
+<body>
+
+<div class="page__hd">
+    <h1 class="page__title">userCenter</h1>
+    <p class="page__desc">个人中心</p>
+</div>
+<div class="page__bd">
+    <div class="weui-panel weui-panel_access">
+        <div class="weui-panel__hd">我购买的测验</div>
+        <div class="weui-panel__bd">
+            <div class="weui-media-box weui-media-box_text">
+                <h4 class="weui-media-box__title">标题一</h4>
+                <p class="weui-media-box__desc">由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。</p>
+            </div>
+            <div class="weui-media-box weui-media-box_text">
+                <h4 class="weui-media-box__title">标题二</h4>
+                <p class="weui-media-box__desc">由各种物质组成的巨型球状天体，叫做星球。星球有一定的形状，有自己的运行轨道。</p>
+            </div>
+        </div>
+        <div class="weui-panel__ft">
+            <a href="javascript:void(0);" class="weui-cell weui-cell_access weui-cell_link">
+                <div class="weui-cell__bd">查看更多</div>
+                <span class="weui-cell__ft"></span>
+            </a>
+        </div>
+    </div>
+</div>
+
+</body>
+<script type="text/javascript" >
+
+</script>
+</html>
