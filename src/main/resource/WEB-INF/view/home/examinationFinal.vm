@@ -31,12 +31,12 @@
             <p>
             <p>
                 <span>详细分析：</span><br/>
-                $detail,请再接再厉!
+                $!detail,请再接再厉!
             </p>
         </div>
     </div>
     <div class="share"><img src="../images/exam/share.png" alt="分享"/></div>
-    <div class="restart" onclick="restart()"><img src="../images/exam/share.png" alt="重新開始測試"/></div>
+    <div class="restart" onclick="restart()"><img src="../images/exam/restart.png" alt="重新開始測試"/></div>
 </div>
 <input type="hidden" id="totalTime" value="$examination.examTime"/>
 <div class="share_b"><img src="../images/exam/fx.png" alt=""/></div>

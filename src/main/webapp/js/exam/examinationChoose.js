@@ -1,4 +1,4 @@
-function startExamination(examinationId,price,charged,chargeFinalTime){
+function startExamination(examinationId,price,charged,chargeFinalTime,testTime){
     if(price==''||price==0.0){
         alert('免费试题无需付费')
         window.location.href='/home/mainPage.htm?id='+examinationId;
@@ -10,6 +10,7 @@ function startExamination(examinationId,price,charged,chargeFinalTime){
         }
     }else {
         alert('您之前购买过此题库，请继续答题')
+        alert('正式考试中是不能退出的，您已中断考试'+testTime+'次，中断3次将失去考试资格！')
         window.location.href="/home/mainPage.htm?id="+examinationId;
     }
 }

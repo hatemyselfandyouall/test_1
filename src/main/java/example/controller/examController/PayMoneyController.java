@@ -85,8 +85,8 @@ public class PayMoneyController extends ReportCrawlerPorxy {
 
         String payType=request.getParameter("payType");
         if ("2".equals(payType)){
-            WXPayLog.info("用户"+user.getWNickname()+"开始购买商品"+examination.getName()+"使用非微信浏览器，直接进入做题页面");
-            UserExamination userExamination=UserExamination.createOrder(user.getId(), examination.getId(), null,null);
+            WXPayLog.info("用户" + user.getWNickname() + "开始购买商品" + examination.getName() + "使用非微信浏览器，直接进入做题页面");
+            UserExamination userExamination=UserExamination.createOrder(user.getId(), examination.getId(),examination.getName(), null,null);
             userExamination.setPayTime(new Date());
             userExamination.setHasPayed(1);
             userExaminationService.insert(userExamination);
@@ -149,7 +149,7 @@ public class PayMoneyController extends ReportCrawlerPorxy {
             result.put("ret_code", 1);
             result.put("ret_msg", res);
             result.put("prepay_id",payId);
-            UserExamination userExamination=UserExamination.createOrder(user.getId(), examination.getId(), orderSn,payId);
+            UserExamination userExamination=UserExamination.createOrder(user.getId(), examination.getId(),examination.getName(), orderSn,payId);
             userExaminationService.insert(userExamination);
         }else {
             result.put("ret_code", 0);

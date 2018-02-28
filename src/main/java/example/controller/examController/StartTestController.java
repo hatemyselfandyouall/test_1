@@ -50,7 +50,7 @@ public class StartTestController {
         param.put("userId",user.getId());
         for (Examination examination:examinations){
         param.put("examinationId",examination.getId());
-            param.put("orderByStr","create_time desc");
+            param.put("orderByStr", "create_time desc");
             List<UserExamination> userExaminations=userExaminationService.findEntitys(param);
             if (!userExaminations.isEmpty()) {
                 Date now=new Date();
@@ -60,6 +60,7 @@ public class StartTestController {
                 } else {
                     examination.setCharged(0);
                 }
+                examination.setUserExamination(userExaminations.get(0));
             } else {
                 examination.setCharged(0);
             }

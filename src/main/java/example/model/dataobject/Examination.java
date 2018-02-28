@@ -72,6 +72,8 @@ public class Examination implements Serializable{
     private Integer charged;
 
     private Date chargeFinalTime;
+
+    private UserExamination userExamination;
     //========== getters and setters ==========
 	
     public Integer getId() {
@@ -257,5 +259,13 @@ public class Examination implements Serializable{
 
     public void setExamTime(Integer examTime) {
         this.examTime = examTime;
+    }
+
+    public UserExamination getUserExamination() {
+        return userExamination;
+    }
+
+    public void setUserExamination(UserExamination userExamination) {
+        this.userExamination = userExamination;
     }
 }

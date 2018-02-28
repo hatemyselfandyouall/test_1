@@ -1,13 +1,11 @@
 package example.controller.examController;
 
-import example.model.dataobject.ChapterExamination;
-import example.model.dataobject.Examination;
-import example.model.dataobject.Question;
+import example.model.dataobject.*;
 import example.model.service.ChapterExaminationService;
 import example.model.service.ExaminationService;
 import example.model.service.QuestionService;
-import example.util.ResultUtil;
-import example.util.StringUtil;
+import example.model.service.UserExaminationService;
+import example.util.*;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -36,6 +34,8 @@ public class ExamController {
     @Autowired
     ChapterExaminationService chapterExaminationService;
 
+    @Autowired
+    UserExaminationService userExaminationService;
     /**
      * 测试主页面
      *
@@ -48,11 +48,28 @@ public class ExamController {
     public String index(HttpServletRequest request, HttpServletResponse response, ModelMap map) {
         String id = request.getParameter("id");
         Examination examination = examinationService.getByKey(id);
-        Map<Integer, List<Question>> questionMap;
-        Map<Integer,Map<Integer, List<Question>>> examinationQuestionMap;
-        if (request.getSession().getAttribute("examinationQuestionMap") == null) {
+        User user=(User)request.getSession().getAttribute(ConstantsUtil.ADMINUSER);
 
-            Map<String, Object> param = new HashMap<>();
+        Map<String,Object> param=new HashMap<>();
+        param.put("examinationId", examination.getId());
+        param.put("userId", user.getId());
+        param.put("userId", "create_time desc");
+        List<UserExamination> userExaminations=userExaminationService.findEntitys(param);
+        ExaminationUtil.payCheck(userExaminations, examination);
+        UserExamination userExamination= userExaminations.get(0);
+        userExamination.setTestTime((userExamination.getTestTime()!=null?userExamination.getTestTime():0)+1);
+        userExamination.setUpdateTime(new Date());
+        userExaminationService.update(userExamination);
+
+        if (examination.getCharged()==0){
+            return "redirect:/home/fail.htm";
+        }
+
+        Map<Integer, List<Question>> questionMap;
+        Map<Integer,Map<Integer, List<Question>>> examinationQuestionMap = (Map<Integer,Map<Integer, List<Question>>>) request.getSession().getAttribute("examinationQuestionMap");
+
+        if (examinationQuestionMap==null||!examinationQuestionMap.keySet().contains(examination.getId())) {
+
             param.put("examinationId", examination.getId());
             List<Question> questions = questionService.findEntitys(param);
             List<ChapterExamination> chapterExaminations = chapterExaminationService.findEntitys(param);
@@ -70,19 +87,11 @@ public class ExamController {
             Date startTime=(Date)request.getSession().getAttribute("startExamTime");
             Date nowTime=new Date();
             Long times=nowTime.getTime() - startTime.getTime();
-            if((examination.getExamTime()-examination.getExamTime()-times/(1000*60))<0){
+            if((examination.getExamTime()-times/(1000*60))<0){
                 return "redirect:/home/mainPage.htm?action=finalPage&id="+examination.getId();
             }else{
                 request.getSession().setAttribute("remainTime", examination.getExamTime() - times / (1000 * 60));
             }
-
-            //取答题参数
-            examinationQuestionMap = (Map<Integer,Map<Integer, List<Question>>>) request.getSession().getAttribute("examinationQuestionMap");
-            questionMap=examinationQuestionMap.get(examination.getId());
-            Integer questionSort = Integer.valueOf(request.getParameter("questionSort") != null ? request.getParameter("questionSort") : "1");
-            Integer questionType = Integer.valueOf(request.getParameter("questionType") != null ? request.getParameter("questionType") : "1");
-            String answerSort = request.getParameter("answersort");
-            String answer = request.getParameter("answer");
 
             //session中保存答案库
             Map<Integer, String> answerMap;
@@ -92,6 +101,21 @@ public class ExamController {
             } else {
                 answerMap = new HashMap<>();
             }
+
+            //取答题参数
+            examinationQuestionMap = (Map<Integer,Map<Integer, List<Question>>>) request.getSession().getAttribute("examinationQuestionMap");
+            questionMap=examinationQuestionMap.get(examination.getId());
+
+            Integer questionSort = Integer.valueOf(request.getParameter("questionSort") != null ? request.getParameter("questionSort") : answerMap.keySet().size()+"");
+            String sort=request.getParameter("questionSort");
+            if (sort==null){
+
+            }
+            Integer questionType = Integer.valueOf(request.getParameter("questionType") != null ? request.getParameter("questionType") : "1");
+            String answerSort = request.getParameter("answersort");
+            String answer = request.getParameter("answer");
+
+
 
             //做过的题目显示答案，没做过的题目将答案存入记录
             if (StringUtil.isBlank(answerMap.get(questionSort)) && answer != null) {

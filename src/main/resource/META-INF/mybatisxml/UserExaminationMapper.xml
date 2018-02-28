@@ -8,6 +8,7 @@
         <result property="id" column="id" />
         <result property="userId" column="user_id" />
         <result property="examinationId" column="examination_id" />
+		<result property="examinationName" column="examination_name" />
 		<result property="orderId" column="order_id" />
 		<result property="prepayId" column="prepay_id" />
 		<result property="isDelete" column="is_delete" />
@@ -21,9 +22,9 @@
 	
   	<insert id="insert" parameterType="example.model.dataobject.UserExamination">
   		INSERT INTO user_examination ( 
-			user_id,examination_id,create_time,update_time,order_id,prepay_id,is_delete,has_payed,pay_time
+			user_id,examination_id,examination_name,create_time,update_time,order_id,prepay_id,is_delete,has_payed,pay_time
   		) VALUES (
-			#{userId},#{examinationId},#{createTime},#{updateTime},#{orderId},#{prepayId},#{isDelete},#{hasPayed},#{payTime}
+			#{userId},#{examinationId},#{examinationName},#{createTime},#{updateTime},#{orderId},#{prepayId},#{isDelete},#{hasPayed},#{payTime}
   		)   
   		<selectKey resultType="Integer" keyProperty="id">    
       		SELECT LAST_INSERT_ID()     
@@ -37,7 +38,8 @@
             <if test="id!=null"> id = #{id} </if>
             <if test="userId!=null">, user_id = #{userId} </if>
             <if test="examinationId!=null">, examination_id = #{examinationId} </if>
-            <if test="createTime!=null">, create_time = #{createTime} </if>
+		<if test="examinationName!=null">, examination_name = #{examinationName} </if>
+		<if test="createTime!=null">, create_time = #{createTime} </if>
             <if test="updateTime!=null">, update_time = #{updateTime} </if>
 		<if test="isDelete!=null">, is_delete = #{isDelete} </if>
 		<if test="hasPayed!=null">, has_payed = #{hasPayed} </if>
@@ -99,6 +101,9 @@
         <if test="param.examinationId!=null">
             AND  examination_id = #{param.examinationId}
         </if>
+		<if test="param.examinationName!=null">
+			AND  examination_name = #{param.examinationName}
+		</if>
         <if test="param.createTime!=null">
             AND  create_time = #{param.createTime}
         </if>
@@ -119,6 +124,9 @@
 		</if>
 		<if test="param.prepayId!=null">
 			AND  prepay_id = #{param.prepayId}
+		</if>
+		<if test="param.canTest==1">
+			AND  to_days(pay_time) = to_days(now())
 		</if>
 	</sql>
 	

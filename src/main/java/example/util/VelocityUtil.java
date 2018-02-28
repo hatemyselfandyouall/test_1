@@ -18,6 +18,15 @@ public class VelocityUtil {
             return  "";
         }
         String result=choice.split("\\.")[0];
+        result=result.trim();
+        return result;
+    }
+
+    public static String getChoiceContent(String choice){
+        if (StringUtil.isBlank(choice)){
+            return  "";
+        }
+        String result=choice.split("\\.")[1];
         return result;
     }
     public static String getExamiantionTotalTime(Integer minutes) {

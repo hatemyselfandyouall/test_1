@@ -103,7 +103,7 @@
                     <ul>
                         #foreach($choice in $velocityUtil.sharpWord($!question.choice,"[|]"))
                             <li questionType="2" value='$velocityUtil.getChoice($choice)' class="#if($velocityUtil.getChoice($choice)==$answer) on #end">
-                                <input type="radio" name="test$sort" id="" class="rad"  value='$velocityUtil.getChoice($choice)'/><span>$velocityUtil.getChoice($choice)</span>$choice
+                                <input type="radio" name="test$sort" id="" class="rad"  value='$velocityUtil.getChoice($choice)'/><span>$velocityUtil.getChoice($choice)</span>$velocityUtil.getChoiceContent($choice)
                             </li>
                         #end
                         <li style="pointer-events: none;"></li>
@@ -147,7 +147,7 @@
                     <ul>
                         #foreach($choice in $velocityUtil.sharpWord($!question.choice,"[|]"))
                             <li questionType="3" value='$velocityUtil.getChoice($choice)' >
-                                <input type="checkbox" name="test$sort" id="" class="rad" value='$velocityUtil.getChoice($choice)' #if($answer.contains($velocityUtil.getChoice($choice))) checked #end /><span>$velocityUtil.getChoice($choice)</span>$choice
+                                <input type="checkbox" name="test$sort" id="" class="rad" value='$velocityUtil.getChoice($choice)' #if($answer.contains($velocityUtil.getChoice($choice))) checked #end /><span>$velocityUtil.getChoice($choice)</span>$velocityUtil.getChoiceContent($choice)
                             </li>
 
                         #end

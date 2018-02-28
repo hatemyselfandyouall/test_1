@@ -24,6 +24,8 @@ public class UserExamination implements Serializable{
     private Integer userId;
     //
     private Integer examinationId;
+
+    private String examinationName;
     //
     private Date createTime;
     //
@@ -38,6 +40,8 @@ public class UserExamination implements Serializable{
     private Integer hasPayed;
 
     private Date payTime;
+
+    private Integer testTime;
 
     //========== getters and setters ==========
 	
@@ -113,10 +117,11 @@ public class UserExamination implements Serializable{
     /**
      *
      */
-    public static UserExamination createOrder(Integer userId,Integer examinationId,String OrderId,String prepayId){
+    public static UserExamination createOrder(Integer userId,Integer examinationId,String examinationName,String OrderId,String prepayId){
         UserExamination userExamination=new UserExamination();
         userExamination.setUserId(userId);
         userExamination.setExaminationId(examinationId);
+        userExamination.setExaminationName(examinationName);
         userExamination.setCreateTime(new Date());
         userExamination.setUpdateTime(new Date());
         userExamination.setIsDelete(0);
@@ -140,5 +145,23 @@ public class UserExamination implements Serializable{
 
     public void setPayTime(Date payTime) {
         this.payTime = payTime;
+    }
+
+    public String getExaminationName() {
+        return examinationName;
+    }
+
+    public void setExaminationName(String examinationName) {
+        this.examinationName = examinationName;
+    }
+
+
+
+    public Integer getTestTime() {
+        return testTime;
+    }
+
+    public void setTestTime(Integer testTime) {
+        this.testTime = testTime;
     }
 }

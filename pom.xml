@@ -477,6 +477,11 @@
       <artifactId>maven-model</artifactId>
       <version>3.0</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.data</groupId>
+      <artifactId>spring-data-redis</artifactId>
+      <version>2.0.4.RELEASE</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -531,4 +536,64 @@
     <path>/</path>
 
   </properties>
+
+  <profiles>
+    <profile>
+      <!--测试服务器配置-->
+      <id>test</id>
+      <properties>
+        <profiles.active>test</profiles.active>
+        <jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
+        <jdbc.url>
+          <![CDATA[jdbc:mysql://115.159.113.37:3306/jypt-06-29?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull&amp;allowMultiQueries=true]]></jdbc.url>
+        <jdbc.username>ucmed</jdbc.username>
+        <jdbc.password>TiAw0@dae6r4Vnb</jdbc.password>
+        <bfSong>/home/ucmed/opt/apache-tomcat-jypt-11500/webapps/font/simsun.ttc</bfSong>
+        <testurl>http://test.jianypt.ucmed.cn/</testurl>
+        <locationurl>/home/ucmed/opt/apache-tomcat-jypt-11500/webapps/</locationurl>
+        <log4j><![CDATA[INFO,DEFAULT]]></log4j>
+        <jy.webservice.url>http://58.61.218.61/HZWS/lis.dll/soap/ILis</jy.webservice.url>
+      </properties>
+    </profile>
+    <profile>
+      <!--正式服务器配置-->
+      <id>work</id>
+      <properties>
+        <profiles.active>work</profiles.active>
+        <!--<jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>-->
+        <!--<jdbc.url><![CDATA[jdbc:mysql://115.159.113.37:3306/jypt-06-29?useUnicode=true&characterEncoding=UTF-8&;zeroDateTimeBehavior=convertToNull&allowMultiQueries=true]]></jdbc.url>-->
+        <!--<jdbc.username>ucmed</jdbc.username>-->
+        <!--<jdbc.password>TiAw0@dae6r4Vnb</jdbc.password>-->
+        <bfSong>/home/ucmed/opt/apache-tomcat-jypt-8080/webapps/font/simsun.ttc</bfSong>
+        <testurl>http://jypt.zwjk.com/</testurl>
+        <locationurl>/home/ucmed/opt/apache-tomcat-jypt-8080/webapps/</locationurl>
+        <log4j><![CDATA[INFO,DEFAULT]]></log4j>
+        <jy.webservice.url>http://58.61.218.61/HZWS/lis.dll/soap/ILis</jy.webservice.url>
+      </properties>
+    </profile>
+    <profile>
+      <!--本地服务器配置-->
+      <id>local</id>
+      <properties>
+        <profiles.active>local</profiles.active>
+        <jdbc.driver>com.mysql.jdbc.Driver</jdbc.driver>
+        <!--<jdbc.url>-->
+        <!--<![CDATA[jdbc:mysql://115.159.113.37:3306/jypt-06-29?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull&amp;allowMultiQueries=true]]></jdbc.url>-->
+        <!--<jdbc.username>ucmed</jdbc.username>-->
+        <!--<jdbc.password>TiAw0@dae6r4Vnb</jdbc.password>-->
+        <jdbc.url><![CDATA[jdbc:mysql://localhost:3306/jypt?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull&amp;allowMultiQueries=true]]></jdbc.url>
+        <jdbc.username>root</jdbc.username>
+        <jdbc.password>111111</jdbc.password>
+        <bfSong>E:\\simsun\\simsun.ttc</bfSong>
+        <testurl>E:\\apache-tomcat-7.0.75\\webapps</testurl>
+        <locationurl>E:\\apache-tomcat-7.0.75\\webapps</locationurl>
+        <log4j><![CDATA[debug,CONSOLE]]></log4j>
+        <jy.webservice.url>http://58.61.218.61/HZWS/lis.dll/soap/ILis</jy.webservice.url>
+      </properties>
+      <activation>
+        <activeByDefault>true</activeByDefault>
+      </activation>
+    </profile>
+  </profiles>
+
 </project>
