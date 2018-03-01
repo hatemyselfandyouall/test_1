@@ -41,7 +41,7 @@ public class UserExamination implements Serializable{
 
     private Date payTime;
 
-    private Integer testTime;
+    private Integer testCount;
 
     //========== getters and setters ==========
 	
@@ -157,11 +157,13 @@ public class UserExamination implements Serializable{
 
 
 
-    public Integer getTestTime() {
-        return testTime;
+
+
+    public Integer getTestCount() {
+        return testCount;
     }
 
-    public void setTestTime(Integer testTime) {
-        this.testTime = testTime;
+    public void setTestCount(Integer testCount) {
+        this.testCount = testCount;
     }
 }

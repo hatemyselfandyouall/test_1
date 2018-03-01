@@ -10,8 +10,13 @@ function startExamination(examinationId,price,charged,chargeFinalTime,testTime){
         }
     }else {
         alert('您之前购买过此题库，请继续答题')
+        if(testTime!=''&&testTime<3){
         alert('正式考试中是不能退出的，您已中断考试'+testTime+'次，中断3次将失去考试资格！')
-        window.location.href="/home/mainPage.htm?id="+examinationId;
+            window.location.href="/home/mainPage.htm?id="+examinationId;
+        }
+        if(testTime!=''&&testTime>=3){
+            alert('正式考试中是不能退出的，您已中断考试3次，失去考试资格！')
+        }
     }
 }
 

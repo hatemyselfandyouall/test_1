@@ -96,7 +96,7 @@
 
                         <p class="center col-md-5">
                             <button type="submit" class="btn btn-primary" onclick="userLogin()">Login</button>
-                            <button type="submit" class="btn btn-primary" onclick="payMoney()">payMoney</button>
+##                            <button type="submit" class="btn btn-primary" onclick="payMoney()">payMoney</button>
                         </p>
                     </fieldset>
             </div>

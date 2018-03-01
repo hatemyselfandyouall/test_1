@@ -53,13 +53,10 @@ public class ExamController {
         Map<String,Object> param=new HashMap<>();
         param.put("examinationId", examination.getId());
         param.put("userId", user.getId());
-        param.put("userId", "create_time desc");
+        param.put("orderByStr", "create_time desc");
         List<UserExamination> userExaminations=userExaminationService.findEntitys(param);
         ExaminationUtil.payCheck(userExaminations, examination);
-        UserExamination userExamination= userExaminations.get(0);
-        userExamination.setTestTime((userExamination.getTestTime()!=null?userExamination.getTestTime():0)+1);
-        userExamination.setUpdateTime(new Date());
-        userExaminationService.update(userExamination);
+        param.clear();
 
         if (examination.getCharged()==0){
             return "redirect:/home/fail.htm";
