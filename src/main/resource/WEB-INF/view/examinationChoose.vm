@@ -45,7 +45,7 @@
     <div class="weui-panel__hd">题库列表</div>
     <div class="weui-panel__bd ">
         #foreach($examination in $examinations)
-        <a onclick="startExamination($!examination.id,'$!examination.price',$!examination.charged,'$examination.chargeFinalTime','$!examination.userExamination.testTime')" class="weui-media-box weui-media-box_appmsg">
+        <a onclick="startExamination($!examination.id,'$!examination.price',$!examination.charged,'$examination.chargeFinalTime','$!examination.userExamination.testCount')" class="weui-media-box weui-media-box_appmsg">
             <div class="weui-media-box__hd">
                 <img class="weui-media-box__thumb" src="../images/icon_nav_photo.png">
             </div>

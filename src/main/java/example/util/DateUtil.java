@@ -695,7 +695,7 @@ public class DateUtil {
     }
 
     public static Date dateAfter1Day(Date date){
-        date.setTime(date.getTime() + 60 * 60 * 24 * 1000);
+        date.setTime(date.getTime() + 60 * 60 * 24 *1000);
         return date;
     }
 

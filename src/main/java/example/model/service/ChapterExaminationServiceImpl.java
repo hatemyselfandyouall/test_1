@@ -76,10 +76,10 @@ public class ChapterExaminationServiceImpl implements ChapterExaminationService{
 			multSize+=chapterExamination1.getMultUse()!=null?chapterExamination1.getMultUse():0;
 			saqSize+=chapterExamination1.getSaqUse()!=null?chapterExamination1.getSaqUse():0;
 		}
-		examination.setJudgeSize(judgeSize);
-		examination.setSingleChoiceSize(singleSize);
-		examination.setMultChoiceSize(multSize);
-		examination.setSaqSize(saqSize);
+		examination.setJudgeUse(judgeSize);
+		examination.setSingleUse(singleSize);
+		examination.setMultUse(multSize);
+		examination.setSaqUse(saqSize);
 		return examinationMapper.update(examination);
 	}
 

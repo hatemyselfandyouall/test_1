@@ -16,6 +16,7 @@ function startExamination(examinationId,price,charged,chargeFinalTime,testTime){
         }
         if(testTime!=''&&testTime>=3){
             alert('正式考试中是不能退出的，您已中断考试3次，失去考试资格！')
+            clearPay(examinationId)
         }
     }
 }
@@ -74,4 +75,26 @@ function payStart(examinationId){
             }
         });
     }
+}
+
+function clearPay(examinationId){
+        $.ajax({
+            type: "post",
+            url: "/home/payMoney.htm?action=clearPay",
+            dataType: 'json',
+            data: {
+                "examinationId": examinationId,
+            },
+            async: false,
+            success: function (data) {
+                var rt = data;
+                if (rt.ret_code == "0") {
+                    alert(rt.ret_msg);
+                }
+                if (rt.ret_code == "1") {
+                    window.location.reload()
+                }
+            }
+        });
+
 }

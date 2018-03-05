@@ -49,17 +49,18 @@ public class ExamController {
         String id = request.getParameter("id");
         Examination examination = examinationService.getByKey(id);
         User user=(User)request.getSession().getAttribute(ConstantsUtil.ADMINUSER);
+        Map<String, Object> param = new HashMap<>();
 
-        Map<String,Object> param=new HashMap<>();
-        param.put("examinationId", examination.getId());
-        param.put("userId", user.getId());
-        param.put("orderByStr", "create_time desc");
-        List<UserExamination> userExaminations=userExaminationService.findEntitys(param);
-        ExaminationUtil.payCheck(userExaminations, examination);
-        param.clear();
-
-        if (examination.getCharged()==0){
-            return "redirect:/home/fail.htm";
+        if (!examination.getPrice().equals(0.0)) {
+            param.put("examinationId", examination.getId());
+            param.put("userId", user.getId());
+            param.put("orderByStr", "create_time desc");
+            List<UserExamination> userExaminations = userExaminationService.findEntitys(param);
+            ExaminationUtil.payCheck(userExaminations, examination);
+            param.clear();
+            if (examination.getCharged() == 0) {
+                return "redirect:/home/fail.htm";
+            }
         }
 
         Map<Integer, List<Question>> questionMap;
@@ -103,11 +104,7 @@ public class ExamController {
             examinationQuestionMap = (Map<Integer,Map<Integer, List<Question>>>) request.getSession().getAttribute("examinationQuestionMap");
             questionMap=examinationQuestionMap.get(examination.getId());
 
-            Integer questionSort = Integer.valueOf(request.getParameter("questionSort") != null ? request.getParameter("questionSort") : answerMap.keySet().size()+"");
-            String sort=request.getParameter("questionSort");
-            if (sort==null){
-
-            }
+            Integer questionSort = Integer.valueOf(request.getParameter("questionSort") != null ? request.getParameter("questionSort") : answerMap.keySet().size()+1+"");
             Integer questionType = Integer.valueOf(request.getParameter("questionType") != null ? request.getParameter("questionType") : "1");
             String answerSort = request.getParameter("answersort");
             String answer = request.getParameter("answer");

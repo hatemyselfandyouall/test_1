@@ -210,4 +210,21 @@ public class PayMoneyController extends ReportCrawlerPorxy {
         result.put("ret_msg","支付确认超时");
         ResultUtil.writeResult(response,result.toString());
     }
+
+    @RequestMapping(method = RequestMethod.POST,params = "action=clearPay")
+    public void clearPay(HttpServletRequest request,HttpServletResponse response) throws IOException, InterruptedException {
+        JSONObject result=new JSONObject();
+        String examinationId=request.getParameter("examinationId");
+        User user= (User) request.getSession().getAttribute(ConstantsUtil.ADMINUSER);
+        Map<String,Object> param=new HashMap<>();
+        param.put("userId",user.getId());
+        param.put("examinationId",examinationId);
+
+        userExaminationService.findEntitys(param).forEach(i -> userExaminationService.deleteByKey(i.getId().toString()));
+
+        result.put("ret_code", 1);
+        result.put("ret_msg","删除成功");
+        ResultUtil.writeResult(response, result.toString());
+
+    }
 }

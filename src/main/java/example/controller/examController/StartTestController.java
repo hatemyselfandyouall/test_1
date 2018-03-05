@@ -54,7 +54,7 @@ public class StartTestController {
             List<UserExamination> userExaminations=userExaminationService.findEntitys(param);
             if (!userExaminations.isEmpty()) {
                 Date now=new Date();
-                if (now.compareTo(DateUtil.dateAfter1Day(userExaminations.get(0).getCreateTime()))<0) {//超时
+                if (now.compareTo(DateUtil.dateAfter1Day(userExaminations.get(0).getPayTime()))<0) {//超时
                     examination.setCharged(1);
                     UserExamination userExamination= userExaminations.get(0);
                     userExamination.setTestCount((userExamination.getTestCount() != null ? userExamination.getTestCount() : 0) + 1);
