@@ -215,6 +215,9 @@ public class ExamController {
             return;
         }
 
+        if (questionType == 3) {
+            answer = StringUtil.examAnswer2questionAnswer(answer);
+        }
         answerMap.put(Integer.valueOf(answerSort),answer);
 
         //更新session中的答题记录
