@@ -1,0 +1,38 @@
+#set($layout="/WEB-INF/view/default.vm")
+<head>
+    <!--weui-->
+    <link rel="stylesheet" href="../we/css/weui.css"/>
+    <link rel="stylesheet" href="../we/example.css"/>
+    <script src="../we/zepto.min.js"></script>
+    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="https://res.wx.qq.com/open/libs/weuijs/1.0.0/weui.min.js"></script>
+    <!--weui-->
+</head>
+<body>
+    <div class="weui-msg">
+        <div class="weui-msg__icon-area"><i class="weui-icon-warn weui-icon_msg"></i></div>
+        <div class="weui-msg__text-area">
+            <h2 class="weui-msg__title">进入测验失败！</h2>
+            <p class="weui-msg__desc">$!resultWord<a href="javascript:void(0);"></a></p>
+        </div>
+        <div class="weui-msg__opr-area">
+            <p class="weui-btn-area">
+                <a href="javascript:window.location.href='/home/startexam.htm'" class="weui-btn weui-btn_primary">返回页面</a>
+            </p>
+        </div>
+
+    </div>
+    <div class="weui-tabbar">
+        <a href="/home/startexam.htm" class="weui-tabbar__item ">
+                    <span style="display: inline-block;position: relative;">
+                        <img src="../we/images/icon_tabbar.png" alt="" class="weui-tabbar__icon">
+                    </span>
+            <p class="weui-tabbar__label">试题选择</p>
+        </a>
+
+        <a href="/home/examinationusercenter.htm" class="weui-tabbar__item weui-bar__item_on">
+            <img src="../we/images/icon_tabbar.png" alt="" class="weui-tabbar__icon">
+            <p class="weui-tabbar__label">个人中心</p>
+        </a>
+    </div>
+</body>

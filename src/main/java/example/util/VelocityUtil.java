@@ -26,7 +26,13 @@ public class VelocityUtil {
         if (StringUtil.isBlank(choice)){
             return  "";
         }
-        String result=choice.split("\\.")[1];
+        String result="";
+        String[] results=choice.split("\\.");
+        for (int i=1;i<results.length;i++){
+            result+=".";
+            result+=results[i];
+        }
+        result=result.substring(1,result.length());
         return result;
     }
     public static String getExamiantionTotalTime(Integer minutes) {

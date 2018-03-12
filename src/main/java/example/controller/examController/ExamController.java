@@ -6,7 +6,9 @@ import example.model.service.ExaminationService;
 import example.model.service.QuestionService;
 import example.model.service.UserExaminationService;
 import example.util.*;
+import example.util.constant.ExaminationConstant;
 import net.sf.json.JSONObject;
+import org.apache.http.HttpRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -40,55 +42,30 @@ public class ExamController {
      * 测试主页面
      *
      * @param request
-     * @param response
      * @param map
      * @return
      */
     @RequestMapping(method = RequestMethod.GET)
-    public String index(HttpServletRequest request, HttpServletResponse response, ModelMap map) {
+    public String index(HttpServletRequest request, ModelMap map) {
         String id = request.getParameter("id");
         Examination examination = examinationService.getByKey(id);
         User user=(User)request.getSession().getAttribute(ConstantsUtil.ADMINUSER);
         Map<String, Object> param = new HashMap<>();
-
-        if (!examination.getPrice().equals(0.0)) {
-            param.put("examinationId", examination.getId());
-            param.put("userId", user.getId());
-            param.put("orderByStr", "create_time desc");
-            List<UserExamination> userExaminations = userExaminationService.findEntitys(param);
-            ExaminationUtil.payCheck(userExaminations, examination);
-            param.clear();
-            if (examination.getCharged() == 0) {
-                return "redirect:/home/fail.htm";
-            }
+        //第一步，确认用户有考试资格，确认用户的考试中退次数不到3次
+        if(!checkExam(examination,param,user)){
+            return "redirect:/home/fail.htm?id="+examination.getId()+"&type="+ ExaminationConstant.EXIT_TO_MUCH_TIME;
         }
 
-        Map<Integer, List<Question>> questionMap;
+        Map<Integer, List<Question>> questionMap=new HashMap<>();
         Map<Integer,Map<Integer, List<Question>>> examinationQuestionMap = (Map<Integer,Map<Integer, List<Question>>>) request.getSession().getAttribute("examinationQuestionMap");
-
+        //若session中未保存题目，则初始化题目及答题时间
         if (examinationQuestionMap==null||!examinationQuestionMap.keySet().contains(examination.getId())) {
-
-            param.put("examinationId", examination.getId());
-            List<Question> questions = questionService.findEntitys(param);
-            List<ChapterExamination> chapterExaminations = chapterExaminationService.findEntitys(param);
-            //题库生成
-            questionMap = questions.stream().collect(Collectors.groupingBy(item -> item.getQuestionType()));
-            questionMap = makeQuestions(questionMap, chapterExaminations);
-            examinationQuestionMap=new HashMap<>();
-            examinationQuestionMap.put(examination.getId(),questionMap);
-
-            request.getSession().setAttribute("examinationQuestionMap", examinationQuestionMap);
-            request.getSession().setAttribute("startExamTime", new Date());
-            map.put("question", questionMap.get(1).get(0));
+            initQuestions(param,examination,questionMap,examinationQuestionMap,request,map);
         } else {
-            //时间判断
-            Date startTime=(Date)request.getSession().getAttribute("startExamTime");
-            Date nowTime=new Date();
-            Long times=nowTime.getTime() - startTime.getTime();
-            if((examination.getExamTime()-times/(1000*60))<0){
-                return "redirect:/home/mainPage.htm?action=finalPage&id="+examination.getId();
-            }else{
-                request.getSession().setAttribute("remainTime", examination.getExamTime() - times / (1000 * 60));
+
+            //确认用户考试未超时
+            if(!checkTime(request,examination)){
+                return "redirect:/home/fail.htm?id="+examination.getId()+"&type="+ExaminationConstant.OUT_TIME;
             }
 
             //session中保存答案库
@@ -104,7 +81,7 @@ public class ExamController {
             examinationQuestionMap = (Map<Integer,Map<Integer, List<Question>>>) request.getSession().getAttribute("examinationQuestionMap");
             questionMap=examinationQuestionMap.get(examination.getId());
 
-            Integer questionSort = Integer.valueOf(request.getParameter("questionSort") != null ? request.getParameter("questionSort") : answerMap.keySet().size()+1+"");
+            Integer questionSort = Integer.valueOf(request.getParameter("questionSort") != null ? request.getParameter("questionSort") : answerMap.keySet().size()+"");
             Integer questionType = Integer.valueOf(request.getParameter("questionType") != null ? request.getParameter("questionType") : "1");
             String answerSort = request.getParameter("answersort");
             String answer = request.getParameter("answer");
@@ -132,7 +109,7 @@ public class ExamController {
             request.getSession().setAttribute("examinationAnswerMap", examinationAnswerMap);
 
             //根据序号获取题目,若序号已超范围，则跳转结果页面
-            if (questionSort >= questionMap.get(0).size()) {
+            if (questionSort > questionMap.get(0).size()) {
                 return "redirect:/home/mainPage.htm?action=finalPage&id="+examination.getId();
             }
 
@@ -181,9 +158,9 @@ public class ExamController {
         }
 
         //根据序号获取题目,若序号已超范围，则跳转结果页面
-        if (questionSort >= questionMap.get(0).size()) {
+        if (questionSort > questionMap.get(0).size()) {
             String undoList = "这是最后一题了，您还有序号为：";
-            for (int i = 0; i < questionSort; i++) {
+            for (int i = 1; i < questionSort; i++) {
                 if (StringUtil.isBlank(answerMap.get(i))) {
                     undoList += i;
                     undoList += "、";
@@ -299,10 +276,22 @@ public class ExamController {
     }
 
 
+
+
     @RequestMapping(method = RequestMethod.GET, params = "action=restartPage")
     public String restartPage(HttpServletRequest request, HttpServletResponse response, ModelMap map) throws IOException {
         String id = request.getParameter("id");
         Examination examination = examinationService.getByKey(id);
+        User user= (User) request.getSession().getAttribute(ConstantsUtil.ADMINUSER);
+        Map<String,Object> param=new HashMap<>();
+        param.put("examinationId", examination.getId());
+        param.put("userId", user.getId());
+        param.put("orderByStr", "create_time desc");
+        List<UserExamination> userExaminations = userExaminationService.findEntitys(param);
+        UserExamination userExamination= userExaminations.get(0);
+        userExamination.setTestCount((userExamination.getTestCount() != null ? userExamination.getTestCount() : 0) + 1);
+        userExamination.setUpdateTime(new Date());
+        userExaminationService.update(userExamination);
         Map<Integer,Map<Integer, List<Question>>> examinationQuestionMap;
         examinationQuestionMap= (Map<Integer, Map<Integer, List<Question>>>) request.getSession().getAttribute("examinationQuestionMap");
         if(examinationQuestionMap!=null&&examinationQuestionMap.get(examination.getId())!=null){
@@ -313,8 +302,10 @@ public class ExamController {
             examinationAnswerMap.remove(examination.getId());
         }
         request.getSession().removeAttribute("startExamTime");
+
         return "redirect:/home/mainPage.htm?id="+examination.getId();
     }
+
 
     /**
      * 将题目按照给与的章节限定进行随机,生成一套试卷
@@ -332,7 +323,7 @@ public class ExamController {
             questionMap.put(i,judgeQuestions);
             total.addAll(judgeQuestions);
         }
-        questionMap.put(0,total);
+        questionMap.put(0, total);
         return questionMap;
     }
 
@@ -393,4 +384,66 @@ public class ExamController {
         list.addAll(set);
         return list;
     }
+
+    public boolean checkExam(Examination examination,Map param,User user){
+        if (!examination.getPrice().equals(0.0)) {
+            param.put("examinationId", examination.getId());
+            param.put("userId", user.getId());
+            param.put("orderByStr", "create_time desc");
+            List<UserExamination> userExaminations = userExaminationService.findEntitys(param);
+            if (!userExaminations.isEmpty()) {
+                Date now=new Date();
+                if (now.compareTo(DateUtil.dateAfter1Day(userExaminations.get(0).getPayTime()))<0) {//超时
+                    examination.setCharged(1);
+                    UserExamination userExamination= userExaminations.get(0);
+                    if (userExamination.getTestCount()!=null&&userExamination.getTestCount()>3){
+                        return false;
+                    }
+                } else {
+                   return false;
+                }
+                examination.setUserExamination(userExaminations.get(0));
+            } else {
+                return false;
+            }
+            param.clear();
+            if (examination.getCharged() == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+
+    public void initQuestions(Map param,Examination examination,Map<Integer,List<Question>> questionMap,Map<Integer,
+            Map<Integer,List<Question>>> examinationQuestionMap,HttpServletRequest request,ModelMap map){
+        param.put("examinationId", examination.getId());
+        List<Question> questions = questionService.findEntitys(param);
+        List<ChapterExamination> chapterExaminations = chapterExaminationService.findEntitys(param);
+        //题库生成
+        questionMap = questions.stream().collect(Collectors.groupingBy(item -> item.getQuestionType()));
+        questionMap = makeQuestions(questionMap, chapterExaminations);
+        examinationQuestionMap=new HashMap<>();
+
+        examinationQuestionMap.put(examination.getId(),questionMap);
+
+        request.getSession().setAttribute("examinationQuestionMap", examinationQuestionMap);
+        request.getSession().setAttribute("startExamTime", new Date());
+        map.put("question", questionMap.get(0).get(0));
+
+    }
+
+    public boolean checkTime(HttpServletRequest request,Examination examination){
+        Date startTime=(Date)request.getSession().getAttribute("startExamTime");
+        Date nowTime=new Date();
+        Long times=nowTime.getTime() - startTime.getTime();
+        if((examination.getExamTime()-times/(1000*60))<0){
+            return false;
+        }else{
+            request.getSession().setAttribute("remainTime", examination.getExamTime() - times / (1000 * 60));
+            return true;
+        }
+    }
+
+
 }
