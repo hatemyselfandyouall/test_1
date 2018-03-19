@@ -48,7 +48,7 @@ public class ExamSecurityFilter implements Filter {
             logger.info(req.getRequestURI() + "?action=" + action);
             if (object != null) { // 获取用户信息 这一步应该在登录成功后操作
                 User adminUser=new User();
-                adminUser.setId(1);
+                adminUser.setId(4);
                 req.getSession().setAttribute(ConstantsUtil.ADMINUSER,adminUser);//将管理员用户注册进入session，使其具有普通用户权限
                 chain.doFilter(request, response);
                 return;

@@ -65,6 +65,17 @@ public class ChapterExaminationController {
     @RequestMapping(method = RequestMethod.POST,params = "action=editExamination")
     public void editExamination(HttpServletRequest request, HttpServletResponse response, @ModelAttribute ChapterExamination chapterExamination) {
         JSONObject result=new JSONObject();
+        if (!chapterExaminationService.checkChapSetting(chapterExamination)){
+            result.put("ret_code",0);
+            result.put("ret_msg","该章节出题数超限");
+            try {
+                ResultUtil.writeResult(response,result.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            return;
+        }
+
         if (chapterExaminationService.SaveChapSetting(chapterExamination)!=0){
             result.put("ret_code",1);
             result.put("ret_msg","成功");

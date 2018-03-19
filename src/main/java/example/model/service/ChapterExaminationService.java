@@ -28,6 +28,8 @@ public interface ChapterExaminationService{
 	Integer getEntitysCount(Map<String, Object> param);
 	 
 	Integer SaveChapSetting(ChapterExamination chapterExamination);
+
+	boolean checkChapSetting(ChapterExamination chapterExamination);
 }
 
  

@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 import java.lang.Integer;
 
+import example.controller.examController.QuestionManagerController;
 import example.model.dao.ExaminationMapper;
+import example.model.dao.QuestionMapper;
 import example.model.dataobject.Examination;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,9 @@ public class ChapterExaminationServiceImpl implements ChapterExaminationService{
 
 	@Autowired
 	private ExaminationMapper examinationMapper;
+
+	@Autowired
+	private QuestionMapper questionMapper;
 	
 	public Integer insert(Object entity){
 		return dao.insert((ChapterExamination)entity);
@@ -81,6 +86,34 @@ public class ChapterExaminationServiceImpl implements ChapterExaminationService{
 		examination.setMultUse(multSize);
 		examination.setSaqUse(saqSize);
 		return examinationMapper.update(examination);
+	}
+
+	@Override
+	public boolean checkChapSetting(ChapterExamination chapterExamination) {
+		int singleUse=chapterExamination.getSingleUse()!=null?chapterExamination.getSingleUse():0;
+		int judgeUse=chapterExamination.getJudgeUse()!=null?chapterExamination.getJudgeUse():0;
+		int multUse=chapterExamination.getMultUse()!=null?chapterExamination.getMultUse():0;
+		int saqUse=chapterExamination.getSaqUse()!=null?chapterExamination.getSaqUse():0;
+		Map<String,Object> param=new HashMap<>();
+		param.put("examinationId",chapterExamination.getExaminationId());
+		param.put("chapterId",chapterExamination.getCharpterId());
+		param.put("questionType",1);
+		if (judgeUse>questionMapper.getEntitysCount(param)){
+			return false;
+		}
+		param.put("questionType",2);
+		if (singleUse>questionMapper.getEntitysCount(param)){
+			return false;
+		}
+		param.put("questionType",3);
+		if (multUse>questionMapper.getEntitysCount(param)){
+			return false;
+		}
+		param.put("questionType",4);
+		if (saqUse>questionMapper.getEntitysCount(param)){
+			return false;
+		}
+		return true;
 	}
 
 

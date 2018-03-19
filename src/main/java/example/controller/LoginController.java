@@ -2,6 +2,7 @@ package example.controller;
 
 import example.model.service.UserService;
 import example.util.StringUtil;
+import example.util.logger.WXPayLog;
 import net.sf.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -26,21 +27,20 @@ public class LoginController extends ReportCrawlerPorxy {
     UserService userService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String index(HttpServletRequest request, HttpServletResponse response, ModelMap map) throws UnsupportedEncodingException {
+    public String index(HttpServletRequest request, HttpServletResponse response, ModelMap map){
         response.setContentType("text/html; charset=UTF-8");
-        JSONObject result=new JSONObject();
-        String url=(String)request.getSession().getAttribute("url");
-        String code=request.getParameter("code");
-        String state=request.getParameter("state");
-        url= StringUtil.replaceStr(url);
-        if(!"123".equals(state)){
-            result.put("ret_code",1);
-            result.put("ret_msg","失败,state错误");
-            map.put("result",result);
-            return "result";
+        String url = (String) request.getSession().getAttribute("url");
+        try {
+            JSONObject result = new JSONObject();
+            String code = request.getParameter("code");
+            String state = request.getParameter("state");
+            url = StringUtil.replaceStr(url);
+            map.put("ret_msg", checkLogin(request, code));
+            return "redirect:"+url;
+        }catch (Exception e){
+            WXPayLog.error(e);
+            return "redirect:"+url;
         }
-        map.put("ret_msg", checkLogin(request, code));
-        return "redirect:"+url;
-//        return "test";
+
     }
 }

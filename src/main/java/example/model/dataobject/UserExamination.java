@@ -126,6 +126,7 @@ public class UserExamination implements Serializable{
         userExamination.setUpdateTime(new Date());
         userExamination.setIsDelete(0);
         userExamination.setOrderId(OrderId);
+        userExamination.setPayTime(new Date());
         userExamination.setPrepayId(prepayId);
         userExamination.setHasPayed(0);
         return userExamination;

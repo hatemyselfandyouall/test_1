@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import javax.swing.text.html.parser.Entity;
 import java.io.IOException;
 import java.util.*;
@@ -82,6 +83,9 @@ public class ExamController {
             questionMap=examinationQuestionMap.get(examination.getId());
 
             Integer questionSort = Integer.valueOf(request.getParameter("questionSort") != null ? request.getParameter("questionSort") : answerMap.keySet().size()+"");
+            if (request.getParameter("questionSort")==null&&answerMap.keySet().size()+1==questionMap.get(0).size()){
+                questionSort=1;
+            }
             Integer questionType = Integer.valueOf(request.getParameter("questionType") != null ? request.getParameter("questionType") : "1");
             String answerSort = request.getParameter("answersort");
             String answer = request.getParameter("answer");
@@ -154,25 +158,9 @@ public class ExamController {
             ResultUtil.writeResult(response, result.toString());
             return;
         }else {
-            request.getSession().setAttribute("remainTime",examination.getExamTime()-times/(1000*60));
+            request.getSession().setAttribute("remainTime", examination.getExamTime() - times / (1000 * 60));
         }
 
-        //根据序号获取题目,若序号已超范围，则跳转结果页面
-        if (questionSort > questionMap.get(0).size()) {
-            String undoList = "这是最后一题了，您还有序号为：";
-            for (int i = 1; i < questionSort; i++) {
-                if (StringUtil.isBlank(answerMap.get(i))) {
-                    undoList += i;
-                    undoList += "、";
-                }
-            }
-            undoList = undoList.substring(0, undoList.length() - 1);
-            undoList += "的题目未完成，确定要提交吗？";
-            result.put("ret_code", "2");
-            result.put("ret_msg", undoList);
-            ResultUtil.writeResult(response, result.toString());
-            return;
-        }
 
 
         //做过的题目显示答案，没做过的题目将答案存入记录
@@ -207,6 +195,24 @@ public class ExamController {
         request.getSession().setAttribute("examinationAnswerMap", examinationAnswerMap);
 
 
+        //根据序号获取题目,若序号已超范围，则跳转结果页面
+        if (questionSort > questionMap.get(0).size()) {
+            String undoList = "这是最后一题了，您还有序号为：";
+            for (int i = 1; i < questionSort; i++) {
+                if (StringUtil.isBlank(answerMap.get(i))) {
+                    undoList += i;
+                    undoList += "、";
+                }
+            }
+            undoList = undoList.substring(0, undoList.length() - 1);
+            undoList += "的题目未完成，确定要提交吗？";
+            result.put("ret_code", "2");
+            result.put("ret_msg", undoList);
+            ResultUtil.writeResult(response, result.toString());
+            return;
+        }
+
+
         result.put("ret_code", "3");
         result.put("ret_msg", "第一次完成");
         ResultUtil.writeResult(response, result.toString());
@@ -215,6 +221,7 @@ public class ExamController {
 
     @RequestMapping(method = RequestMethod.GET, params = "action=finalPage")
     public String finalPage(HttpServletRequest request, HttpServletResponse response, ModelMap map) throws IOException {
+        User user=(User)request.getSession().getAttribute(ConstantsUtil.ADMINUSER);
         String id = request.getParameter("id");
         Examination examination = examinationService.getByKey(id);
         Map<Integer, List<Question>> questionMap;
@@ -271,7 +278,9 @@ public class ExamController {
         }
         String resultDetail="共"+questionMap.get(0).size()+"道题，您答对了"+rightCount+"道题，答错了"+wrongCount+"道题，未完成"+undoCount+"道题，获得的总分为"+totalScore+"分";
         map.put("detail",resultDetail);
-        map.put("examination",examination);
+        map.put("examination", examination);
+        HttpSession session=request.getSession();
+        finalExam(user.getId(),examination.getId(),session);
         return "/home/examinationFinal";
     }
 
@@ -361,12 +370,12 @@ public class ExamController {
                    break;
                default:
            }
-           questions=classfyQuestion(questions,totalQuestionSize,questionUse);
+           questions=classfyQuestion(questions,questionUse);
            resultQuestions.addAll(questions);
        }
        return resultQuestions;
     }
-    public List<Question>  classfyQuestion(List<Question> questions,Integer totalQuestionSize,Integer questionUse) {
+    public List<Question>  classfyQuestion(List<Question> questions,Integer questionUse) {
         if (questions==null||questions.isEmpty()||questionUse==0){
             return new ArrayList<>();
         }
@@ -390,6 +399,7 @@ public class ExamController {
             param.put("examinationId", examination.getId());
             param.put("userId", user.getId());
             param.put("orderByStr", "create_time desc");
+            param.put("isDelete",0);
             List<UserExamination> userExaminations = userExaminationService.findEntitys(param);
             if (!userExaminations.isEmpty()) {
                 Date now=new Date();
@@ -445,5 +455,25 @@ public class ExamController {
         }
     }
 
+    private void finalExam(Integer userId,Integer examinationId,HttpSession session){
+        session.removeAttribute("remainTime");
+        session.removeAttribute("startExamTime");
+        Map < Integer, Map < Integer, List < Question >>> examinationQuestionMap = (Map<Integer,Map<Integer, List<Question>>>) session.getAttribute("examinationQuestionMap");
+        examinationQuestionMap.remove(examinationId);
+        Map<Integer,Map<Integer,String>> examinationAnswerMap=(HashMap<Integer,Map<Integer,String>> )session.getAttribute("examinationAnswerMap");
+        examinationAnswerMap.remove(examinationId);
+        Map<String,Object> param=new HashMap<>();
+        param.put("userId",userId);
+        param.put("examinationId",examinationId);
+        param.put("isDelete", 0);
+        List<UserExamination> userExaminations=userExaminationService.findEntitys(param);
+        if (userExaminations.isEmpty()){
+            return;
+        }else {
+            userExaminations.get(0).setIsDelete(1);
+            userExaminationService.update(userExaminations.get(0));
+            return;
+        }
+    }
 
 }
