@@ -7,6 +7,7 @@ import example.model.service.ExaminationService;
 import example.model.service.UserExaminationService;
 import example.util.ConstantsUtil;
 import example.util.DateUtil;
+import example.util.logger.WXPayLog;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -43,7 +44,9 @@ public class StartTestController {
      */
     @RequestMapping(method = RequestMethod.GET)
     public String index(HttpServletRequest request, HttpServletResponse response, ModelMap map) {
+        WXPayLog.info("进入页面");
         User user=(User)request.getSession().getAttribute(ConstantsUtil.ADMINUSER);
+        WXPayLog.info("调用者"+user.getWNickname());
         Map<String,Object> param=new HashMap<>();
         param.put("isDelete",0);
         List<Examination> examinations=examinationService.findEntitys(param);
@@ -68,7 +71,7 @@ public class StartTestController {
                 examination.setCharged(0);
             }
         }
-
+        WXPayLog.info("打开选题页面"+user.getWNickname());
         map.put("examinations",examinations);
         return "examinationChoose";
     }

@@ -37,7 +37,6 @@ public class BackDoorLoginController {
      */
     @RequestMapping(method = RequestMethod.GET)
     public String index(HttpServletRequest request,HttpServletResponse response,ModelMap map) {
-        System.out.println("123");
         return "/exam/login";
     }
 
@@ -46,7 +45,6 @@ public class BackDoorLoginController {
         JSONObject result=new JSONObject();
         String username=request.getParameter("username");
         String password=request.getParameter("password");
-        System.out.println(username+password);
         if ("admin".equals(username)&&"admin".equals(password)){
             request.getSession().setAttribute(ConstantsUtil.BACKGROUNDUSER,1);
             result.put("ret",1);

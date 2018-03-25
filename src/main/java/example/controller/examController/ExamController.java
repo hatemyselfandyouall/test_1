@@ -63,12 +63,10 @@ public class ExamController {
         if (examinationQuestionMap==null||!examinationQuestionMap.keySet().contains(examination.getId())) {
             initQuestions(param,examination,questionMap,examinationQuestionMap,request,map);
         } else {
-
             //确认用户考试未超时
             if(!checkTime(request,examination)){
                 return "redirect:/home/fail.htm?id="+examination.getId()+"&type="+ExaminationConstant.OUT_TIME;
             }
-
             //session中保存答案库
             Map<Integer, String> answerMap;
             Map<Integer,Map<Integer,String>> examinationAnswerMap=(HashMap<Integer,Map<Integer,String>> )request.getSession().getAttribute("examinationAnswerMap");
@@ -77,7 +75,6 @@ public class ExamController {
             } else {
                 answerMap = new HashMap<>();
             }
-
             //取答题参数
             examinationQuestionMap = (Map<Integer,Map<Integer, List<Question>>>) request.getSession().getAttribute("examinationQuestionMap");
             questionMap=examinationQuestionMap.get(examination.getId());
@@ -89,9 +86,6 @@ public class ExamController {
             Integer questionType = Integer.valueOf(request.getParameter("questionType") != null ? request.getParameter("questionType") : "1");
             String answerSort = request.getParameter("answersort");
             String answer = request.getParameter("answer");
-
-
-
             //做过的题目显示答案，没做过的题目将答案存入记录
             if (StringUtil.isBlank(answerMap.get(questionSort)) && answer != null) {
                 //多选题需进行answer的转化
@@ -102,7 +96,6 @@ public class ExamController {
             } else {
                 map.put("answer", answerMap.get(questionSort));
             }
-
             //更新session中的答题记录
             if (examinationAnswerMap!=null){
                 examinationAnswerMap.put(examination.getId(),answerMap);
@@ -117,10 +110,9 @@ public class ExamController {
                 return "redirect:/home/mainPage.htm?action=finalPage&id="+examination.getId();
             }
 
-            Question nowQuesTion = questionMap.get(0).get(questionSort - 1);
+            Question nowQuesTion = questionMap.get(0).get((questionSort-1)<0?0:questionSort-1);
             map.put("question", nowQuesTion);
         }
-
         map.put("examination", examination);
         return "/home/neoexaminationPage";
     }
@@ -134,7 +126,6 @@ public class ExamController {
         Map<Integer,Map<Integer, List<Question>>> examinationQuestionMap;
         examinationQuestionMap = (Map<Integer,Map<Integer, List<Question>>>) request.getSession().getAttribute("examinationQuestionMap");
         questionMap=examinationQuestionMap.get(examination.getId());
-
         Integer questionSort = Integer.valueOf(request.getParameter("questionSort") != null ? request.getParameter("questionSort") : "1");
         Integer questionType = Integer.valueOf(request.getParameter("questionType") != null ? request.getParameter("questionType") : "1");
         String answerSort = request.getParameter("answersort");
@@ -161,8 +152,6 @@ public class ExamController {
             request.getSession().setAttribute("remainTime", examination.getExamTime() - times / (1000 * 60));
         }
 
-
-
         //做过的题目显示答案，没做过的题目将答案存入记录
         if (!StringUtil.isBlank(answerMap.get(Integer.valueOf(answerSort)))){
             result.put("ret_code", "1");
@@ -170,8 +159,6 @@ public class ExamController {
             ResultUtil.writeResult(response, result.toString());
             return;
         }
-
-
 
         if(StringUtil.isBlank(answer)){
             result.put("ret_code", "4");

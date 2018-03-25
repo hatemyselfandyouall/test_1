@@ -45,6 +45,7 @@ function payStart(examinationId){
             async: false,
             success: function (data) {
                 var rt = data;
+
                 if (rt.ret_code == "0") {
                     alert(rt.ret_msg);
                 }

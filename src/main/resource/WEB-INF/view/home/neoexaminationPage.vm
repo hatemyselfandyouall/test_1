@@ -38,7 +38,7 @@
             <div class="item">
                 <div class="tit"><strong>一、判断题（共$!examination.judgeUse题，每题$!examination.judgeScore分）</strong></div>
                 <div class="tit"><span>$!question.sort.</span>$!question.content
-                    #if($answer!="")
+                    #if($!answer)
                         <span class="answerSpan" style="color: red">
                             #if($answer!=$question.answerChoice)
                             <img class="failImg" src="../images/exam/wrong.jpg">
@@ -89,7 +89,7 @@
             <div class="item">
                 <div class="tit"><strong>二、单选题（共$!examination.singleUse题，每题$!examination.singleScore分）</strong></div>
                 <div class="tit"><span>$!question.sort.</span>$!question.content
-                #if($answer!="")
+                    #if($!answer)
                     <span class="answerSpan" style="color: red;">
                          #if($answer!=$question.answerChoice)
                              <img class="failImg" src="../images/exam/wrong.jpg">
@@ -133,7 +133,7 @@
             <div class="item">
                 <div class="tit"><strong>三、多选题（共$!examination.multUse题，每题$!examination.multScore分）</strong></div>
                 <div class="tit"><span>$!question.sort.</span>$!question.content
-                    #if($answer!="")
+                    #if($!answer)
                         <span class="answerSpan" style="color: red;">
                          #if($answer!=$question.answerChoice)
                              <img class="failImg" src="../images/exam/wrong.jpg">
