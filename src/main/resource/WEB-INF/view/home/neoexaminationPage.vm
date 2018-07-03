@@ -146,9 +146,9 @@
                 <div class="item_con">
                     <ul>
                         #foreach($choice in $velocityUtil.sharpWord($!question.choice,"[|]"))
-                            <li questionType="3" value='$velocityUtil.getChoice($choice)' >
+                            <label  questionType="3" value='$velocityUtil.getChoice($choice)' for="$velocityUtil.getChoice($choice)" >
                                 <input type="checkbox" name="test$sort" id="" class="rad" value='$velocityUtil.getChoice($choice)' #if($answer.contains($velocityUtil.getChoice($choice))) checked #end /><span>$velocityUtil.getChoice($choice)</span>$velocityUtil.getChoiceContent($choice)
-                            </li>
+                            </label >
 
                         #end
                         <li style="pointer-events: none;"></li>

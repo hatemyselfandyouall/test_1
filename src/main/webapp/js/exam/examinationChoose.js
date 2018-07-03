@@ -56,25 +56,25 @@ function payStart(examinationId){
         });
     }else {
         alert('非微信浏览器使用二维码支付，此处建议使用二维码支付，待定中')
-        $.ajax({
-            type: "post",
-            url: "/home/payMoney.htm?action=prePayRequest",
-            dataType: 'json',
-            data: {
-                "examinationId": examinationId,
-                "payType":2,
-            },
-            async: false,
-            success: function (data) {
-                var rt = data;
-                if (rt.ret_code == "0") {
-                    alert(rt.ret_msg);
-                }
-                if (rt.ret_code == "1") {
-                    window.location.href="/home/mainPage.htm?id="+examinationId;
-                }
-            }
-        });
+        //$.ajax({
+        //    type: "post",
+        //    url: "/home/payMoney.htm?action=prePayRequest",
+        //    dataType: 'json',
+        //    data: {
+        //        "examinationId": examinationId,
+        //        "payType":2,
+        //    },
+        //    async: false,
+        //    success: function (data) {
+        //        var rt = data;
+        //        if (rt.ret_code == "0") {
+        //            alert(rt.ret_msg);
+        //        }
+        //        if (rt.ret_code == "1") {
+        //            window.location.href="/home/mainPage.htm?id="+examinationId;
+        //        }
+        //    }
+        //});
     }
 }
 
